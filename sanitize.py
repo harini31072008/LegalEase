@@ -1,0 +1,27 @@
+import re
+import unicodedata
+
+
+def sanitize_text(text: str) -> str:
+    if not text:
+        return ""
+
+    replacements = {
+        "\u2018": "'",
+        "\u2019": "'",
+        "\u201c": '"',
+        "\u201d": '"',
+        "\u2013": "-",
+        "\u2014": "-",
+        "\u00a0": " ",
+        "\ufeff": "",
+    }
+
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+
+    text = unicodedata.normalize("NFKC", text)
+    text = re.sub(r"[ \t]+\n", "\n", text)
+    text = re.sub(r"\n{4,}", "\n\n\n", text)
+
+    return text.strip()
